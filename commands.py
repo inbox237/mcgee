@@ -1,7 +1,22 @@
 from main import db
-from flask import Blueprint
+from flask import Blueprint, current_app
+from flask.cli import with_appcontext
 import random
+import click
+from click import pass_context
+import webbrowser
+import os
 
+
+REGION_NAMES = {
+        1: "NSW",
+        2: "QLD",
+        3: "SA",
+        4: "TAS",
+        5: "VIC",
+        6: "WA",
+        7: "ACT",
+        8: "NT"}
 db_commands = Blueprint("db", __name__)
 
 @db_commands.cli.command("create")
@@ -21,13 +36,13 @@ def seed_db():
     from models.Region import Region
     from models.Salesperson import Salesperson
     from faker import Faker
+
     faker = Faker()
     
     #Mcgee Real Estate Seeds
-    for i in range(20):
-        states = ["NSW", "QLD", "SA", "TAS", "VIC", "WA", "ACT", "NT"]
+    for i in range(1,9):
         office = Office()
-        office.name = (random.choice(states))
+        office.name = REGION_NAMES[i]
         db.session.add(office)
 
     db.session.commit()
@@ -39,16 +54,24 @@ def seed_db():
         agent.first_name = namesplit[0]
         agent.last_name = namesplit[1]
         agent.email = f"{namesplit[0]}{namesplit[1]}@mcgee.com"
-        agent.office_id = random.randint(1,20)
+        agent.office_id = random.randint(1,8)
 
         db.session.add(agent)
 
     #May Black Real Estate Seeds
-    for i in range(20):
-        states = ["NSW", "QLD", "SA", "TAS", "VIC", "WA", "ACT", "NT"]
+    # for i in range(20):
+    #     states = ["NSW", "QLD", "SA", "TAS", "VIC", "WA", "ACT", "NT"]
+    #     region = Region()
+    #     region.name = (random.choice(states))
+    #     db.session.add(region)
+
+    for i in range(1, 9):
         region = Region()
-        region.name = (random.choice(states))
+        
+
+        region.name = REGION_NAMES[i]
         db.session.add(region)
+
 
     db.session.commit()
 
@@ -58,10 +81,10 @@ def seed_db():
         namesplit = faker.name().split(" ")
         
         #Faker sometimes returned more than two words for a name - workaround
-        salesperson.name = f"{namesplit[0]}{namesplit[1]}"
+        salesperson.name = f"{namesplit[0]} {namesplit[1]}"
 
         salesperson.email = f"{namesplit[0]}{namesplit[1]}@mcgee.com"
-        salesperson.region_id = random.randint(1,20)
+        salesperson.region_id = random.randint(1,8)
 
         db.session.add(salesperson)
 
@@ -69,3 +92,14 @@ def seed_db():
     db.session.commit()
 
     print("Tables seeded")
+
+
+@db_commands.cli.command("start")
+@pass_context
+def refresh_db(ctx):
+    drop_db.invoke(ctx)
+    create_db.invoke(ctx)
+    seed_db.invoke(ctx)
+    print("All Done!, Flask program will now start....")
+    webbrowser.open("http://127.0.0.1:5000/agents/")
+    os.system("FLASK_DEBUG=1 flask run --no-reload")

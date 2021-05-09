@@ -28,13 +28,16 @@ class Config(object):
         return json.loads(value)
 
 class DevelopmentConfig(Config):
-    DEBUG = True
+    DEBUG = False
+    use_reloader=False
 
 class ProductionConfig(Config):
-    pass
+    DEBUG = False
+    use_reloader=False
 
 class TestingConfig(Config):
     TESTING = True
+    DEBUG = False
 
 environment = os.environ.get("FLASK_ENV")
 
