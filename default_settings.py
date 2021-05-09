@@ -4,7 +4,7 @@ import json
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     #SQLALCHEMY_BINDS = {
-    #    "mayblack": "postgresql+psycopg2://postgres:coder@13.210.56.56/mcgee_mayblack"
+    #    "mcgee_mayblack": "postgresql+psycopg2://postgres:coder@13.210.56.56/mcgee_mayblack"
     #    }
 
     @property
