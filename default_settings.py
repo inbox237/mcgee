@@ -1,10 +1,11 @@
 import os
+import json
 
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_BINDS = {
-        "mayblack": "postgresql+psycopg2://postgres:coder@13.210.56.56/mcgee_mayblack"
-        }
+    #SQLALCHEMY_BINDS = {
+    #    "mayblack": "postgresql+psycopg2://postgres:coder@13.210.56.56/mcgee_mayblack"
+    #    }
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):
@@ -15,14 +16,13 @@ class Config(object):
 
         return value
 
-    # @property
-    # def SQLALCHEMY_BINDS(self):
-    #     value = os.environ.get("DB_BINDS")
+    @property
+    def SQLALCHEMY_BINDS(self):
+        value = os.environ.get("DB_BINDS")
+        if not value:
+            raise ValueError("DB_BINDS is not set")
 
-    #     if not value:
-    #         raise ValueError("DB_BINDS is not set")
-
-    #     return value
+        return json.loads(value)
 
 class DevelopmentConfig(Config):
     DEBUG = True

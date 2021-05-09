@@ -14,4 +14,4 @@ class Agent(db.Model):
     last_name = db.Column(db.String())
     email = db.Column(db.String())
     office_id = db.Column(db.Integer, db.ForeignKey("offices.id"), nullable=True)
-    office_name = relationship("Office", back_populates="office_agents")
+    office_name = db.relationship("Office", back_populates="office_agents")

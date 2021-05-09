@@ -10,7 +10,10 @@ Base = declarative_base()
 
 class Office(db.Model):
     __tablename__ = "offices"
-    
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
-    office_agents = relationship("Agent", back_populates="office_name")
+    office_agents = db.relationship("Agent", back_populates="office_name")
+    def __str__(self):
+        return self.name
+        #return f"{{\n\tid: {self.id}\n\tname: {self.name}\n}}"

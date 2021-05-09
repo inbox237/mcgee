@@ -29,7 +29,7 @@ def office_show(id):
     office = Office.query.get(id)
 
     if not office:
-        return abort(400, description="Invalid Office ID" )
+        return abort(404, description="Invalid Office ID" )
 
     return jsonify(office_schema.dump(office))
 

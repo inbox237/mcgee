@@ -29,7 +29,7 @@ def agent_show(id):
     agent = Agent.query.get(id)
 
     if not agent:
-        return abort(400, description="Invalid Agent ID" )
+        return abort(404, description="Invalid Agent ID" )
 
     return jsonify(agent_schema.dump(agent))
 
