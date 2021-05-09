@@ -9,6 +9,7 @@ from models.Salesperson import Salesperson
 Base = declarative_base()
 
 class Region(db.Model):
+    # bind key allows connection to other non-default database
     __bind_key__ = "mcgee_mayblack"
     __tablename__ = "regions"
 

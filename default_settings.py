@@ -3,6 +3,8 @@ import json
 
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    #Backup in case bind not working through .env file:
     #SQLALCHEMY_BINDS = {
     #    "mcgee_mayblack": "postgresql+psycopg2://postgres:coder@13.210.56.56/mcgee_mayblack"
     #    }
@@ -22,6 +24,7 @@ class Config(object):
         if not value:
             raise ValueError("DB_BINDS is not set")
 
+        # Using a normal bind with a .env file resulted in a string error so I was able to get around this by returning a json
         return json.loads(value)
 
 class DevelopmentConfig(Config):

@@ -23,7 +23,7 @@ def seed_db():
     from faker import Faker
     faker = Faker()
     
-    #Mcgee
+    #Mcgee Real Estate Seeds
     for i in range(20):
         states = ["NSW", "QLD", "SA", "TAS", "VIC", "WA", "ACT", "NT"]
         office = Office()
@@ -43,7 +43,7 @@ def seed_db():
 
         db.session.add(agent)
 
-    #May Black
+    #May Black Real Estate Seeds
     for i in range(20):
         states = ["NSW", "QLD", "SA", "TAS", "VIC", "WA", "ACT", "NT"]
         region = Region()
@@ -57,7 +57,9 @@ def seed_db():
         namenonsplit = faker.name()
         namesplit = faker.name().split(" ")
         
+        #Faker sometimes returned more than two words for a name - workaround
         salesperson.name = f"{namesplit[0]}{namesplit[1]}"
+
         salesperson.email = f"{namesplit[0]}{namesplit[1]}@mcgee.com"
         salesperson.region_id = random.randint(1,20)
 

@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 class Salesperson(db.Model):
+    # bind key allows connection to other non-default database
     __bind_key__ = "mcgee_mayblack"
     __tablename__ = "salespersons"
     
