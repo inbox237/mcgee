@@ -103,6 +103,6 @@ def refresh_db(ctx):
     seed_db.invoke(ctx)
     print("All Done! A web browser will launch showing the final list of agents....")
     webbrowser.open("http://127.0.0.1:5000/agents/")
-    os.system("FLASK_DEBUG=1 flask run --no-reload")
+    os.system("FLASK_DEBUG=1 flask run --host=0.0.0.0 --no-reload")
     # subprocess.Popen(["FLASK_DEBUG=1", "flask", "run", "--no-reload"]) tried to use to create non-blocking process so the web browser can be opened after update
     # but permissions error needs to be corrected.
