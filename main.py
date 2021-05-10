@@ -18,9 +18,9 @@ db = SQLAlchemy()
 ma = Marshmallow()
 
 #BACKGROUND WORKER - GLOBAL
-POOL_TIME = 5 #Seconds
+POOL_TIME = 60 #Seconds
 
-# variables that are accessible from anywhere
+# accessible from anywhere
 commonDataStruct = {}
 # lock to control access to variable
 dataLock = threading.Lock()
@@ -66,36 +66,36 @@ def create_app():
         with dataLock:
             with app.app_context():
                 try:
-                    salesperson_query = db.session.query(Salesperson).filter(Salesperson.region_id==2)
+                    salesperson_query = db.session.query(Salesperson).filter(Salesperson.region_id==2) #finds all salespersons that have region id of 2 which is QLD
+                    updated = False
+                    print('Comparing McGee and Mayblack databases...')
                     for salesperson in salesperson_query:
-                        agent_query = db.session.query(Agent).filter(Agent.email==salesperson.email)
-                        print(list(agent_query))
-                        if len(list(agent_query))==0:
+                        agent_query = db.session.query(Agent).filter(Agent.email==salesperson.email) #finds all salespersons that already exist in agents matched on email
+                        if len(list(agent_query))==0:#makes the above into a list and if len = 0 it means it already exists and doesnt add, otherwise add
                             first_name, last_name = salesperson.name.split(" ")
                             agent = Agent(first_name=first_name, last_name=last_name, email=salesperson.email, office_id=salesperson.region_id)
                             db.session.add(agent)
+                            updated = True
                     db.session.commit()
+                    print('Differences in databases found, update completed, sleeping...') if updated else print('Nothing found to update, sleeping...')
                     bg_worker = threading.Timer(POOL_TIME, background_update, ())
-                    bg_worker.start() 
+                    bg_worker.start()
                 except (NameError, exc.ProgrammingError, NoResultFound):
-                    return  
-
-
-    #NOT NEEDED BUT MAY BE USEFUL LATER
+                    return 
+    
     def background_update_start():
-        # Do initialisation here
+        # initialisation
         global bg_worker
         
-        # Create your thread
+        # Had to move this section down here in separate try except as it was causing issues with seed and drop, this prevents a worker starting if query finds no salespeople matching
         with app.app_context():
             try:
                 salesperson_query = db.session.query(Salesperson).filter(Salesperson.region_id==2)
-                print(list(salesperson_query))
-                if not len(list(salesperson_query)): #is empty
+                if not len(list(salesperson_query)): #is empty, falsey interaction
                     return
             except (NameError, exc.ProgrammingError, NoResultFound):
                 return
-        bg_worker = threading.Timer(POOL_TIME, background_update, ())
+        bg_worker = threading.Timer(5, background_update, ()) #timer is time before start worker
         bg_worker.start()
 
     # Initiate

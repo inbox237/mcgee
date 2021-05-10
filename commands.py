@@ -6,7 +6,7 @@ import click
 from click import pass_context
 import webbrowser
 import os
-
+import subprocess
 
 REGION_NAMES = {
         1: "NSW",
@@ -58,6 +58,7 @@ def seed_db():
 
         db.session.add(agent)
 
+    #Decided to use set region ids instead
     #May Black Real Estate Seeds
     # for i in range(20):
     #     states = ["NSW", "QLD", "SA", "TAS", "VIC", "WA", "ACT", "NT"]
@@ -100,6 +101,8 @@ def refresh_db(ctx):
     drop_db.invoke(ctx)
     create_db.invoke(ctx)
     seed_db.invoke(ctx)
-    print("All Done!, Flask program will now start....")
+    print("All Done! A web browser will launch showing the final list of agents....")
     webbrowser.open("http://127.0.0.1:5000/agents/")
     os.system("FLASK_DEBUG=1 flask run --no-reload")
+    # subprocess.Popen(["FLASK_DEBUG=1", "flask", "run", "--no-reload"]) tried to use to create non-blocking process so the web browser can be opened after update
+    # but permissions error needs to be corrected.
